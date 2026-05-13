@@ -17,12 +17,13 @@ export default function AppRouter({ user, setUser }) {
   }
 
   const handleLogout = async () => {
+    localStorage.removeItem("login_started_at")
+
     const { error } = await supabase.auth.signOut()
 
     if (error) {
       console.error("Error cerrando sesión:", error)
     }
-
     setUser(null)
   }
 
