@@ -25,7 +25,7 @@ export default function Login({ onLogin }) {
       setError("Credenciales incorrectas")
       return
     }
-
+    localStorage.setItem("login_started_at", Date.now().toString())
     onLogin(data.user)
   }
 
