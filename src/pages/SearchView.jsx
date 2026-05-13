@@ -134,7 +134,7 @@ export default function SearchView() {
   }
 
   return (
-    <main className="h-[calc(100vh-4rem)] max-w-7xl mx-auto px-6 py-5 flex flex-col overflow-hidden">
+    <main className="h-[calc(100vh-100px)] max-w-7xl mx-auto px-6 py-5 flex flex-col overflow-hidden">
       <section className="mb-4 shrink-0">
         <h1 className="text-2xl font-semibold text-gray-800">
           Buscar en el archivo
