@@ -39,7 +39,18 @@ export async function searchRecords({
   }
 
   const ids = matches.map((item) => item.id)
-  const scoresById = new Map(matches.map((item) => [item.id, item.score]))
+
+  const scoresById = new Map(
+    matches.map((item) => [Number(item.id), item.score])
+  )
+
+  // Muy importante:
+  // Guardamos la posición exacta devuelta por la función SQL.
+  // Así respetamos el orden por relevancia + cercanía de año.
+  const orderById = new Map(
+    matches.map((item, index) => [Number(item.id), index])
+  )
+
   const totalCount = Number(matches[0]?.total_count || 0)
 
   const { data: records, error: recordsError } = await supabase
@@ -55,9 +66,14 @@ export async function searchRecords({
   const orderedRecords = (records || [])
     .map((record) => ({
       ...record,
-      score: scoresById.get(record.id) || 0,
+      score: scoresById.get(Number(record.id)) || 0,
     }))
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => {
+      const orderA = orderById.get(Number(a.id)) ?? Number.MAX_SAFE_INTEGER
+      const orderB = orderById.get(Number(b.id)) ?? Number.MAX_SAFE_INTEGER
+
+      return orderA - orderB
+    })
 
   return {
     records: orderedRecords,
