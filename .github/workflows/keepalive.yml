@@ -2,14 +2,16 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: "0 10 * * *" # todos los días a las 10:00 UTC
+    - cron: "0 10 * * *"
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+
     steps:
       - name: Ping Supabase
         run: |
-          curl -X GET "https://uknovavxcfzljostuznk.supabase.co/rest/v1/?select=1" \
-          -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
-          -H "Authorization: Bearer ${{ secrets.SUPABASE_API_KEY }}"
+          curl -X GET "https://uknovavxcfzljostuznk.supabase.co/rest/v1/lugares?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_API_KEY }}"
