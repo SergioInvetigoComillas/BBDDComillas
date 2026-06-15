@@ -10,8 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ping Supabase
+      - name: Ping Supabase (REST - lectura)
+        continue-on-error: true
         run: |
-          curl -X GET "https://uknovavxcfzljostuznk.supabase.co/rest/v1/lugares?select=id&limit=1" \
-            -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_API_KEY }}"
+          echo "🔄 Intentando ping REST..."
+          for i in 1 2 3; do
+            curl -s -o /dev/null -w "%{http_code}" \
+              -X GET "https://uknovavxcfzljostuznk.supabase.co/rest/v1/lugares?select=id&limit=1" \
+              -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
+              -H "Authorization: Bearer ${{ secrets.SUPABASE_API_KEY }}" \
+              --max-time 10 && break
+            echo "❌ Intento $i fallido, reintentando..."
+            sleep 5
+          done
+
+      - name: Ping Supabase (RPC - función ping)
+        continue-on-error: true
+        run: |
+          echo "🔄 Intentando ping RPC..."
+          for i in 1 2 3; do
+            curl -s -o /dev/null -w "%{http_code}" \
+              -X POST "https://uknovavxcfzljostuznk.supabase.co/rest/v1/rpc/ping" \
+              -H "apikey: ${{ secrets.SUPABASE_API_KEY }}" \
+              -H "Authorization: Bearer ${{ secrets.SUPABASE_API_KEY }}" \
+              --max-time 10 && break
+            echo "❌ Intento $i fallido, reintentando..."
+            sleep 5
+          done
+
+      - name: Confirmación final
+        run: echo "✅ Ping ejecutado (aunque algún intento haya fallado)"
